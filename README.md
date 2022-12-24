@@ -1,4 +1,4 @@
-# Pokemon List & Detail
+# Fish Comodity List
 
 Exploration project for fish comodity list, requirment from eFishery recruitment team
 This project using react.js
