@@ -187,6 +187,20 @@ const Table = ({
     return result;
   }
 
+  const renderSortIcon = (name) => {
+    if (sortValue?.name === name && sortValue.asc) {
+      return (
+        <i className="fa fa-sort-up" />
+      );
+    } else if (sortValue?.name === name && !sortValue.asc) {
+      return (
+        <i className="fa fa-sort-down" />
+      );
+    }
+    return (
+      <i className="fa fa-sort" />
+    );
+  }
 
   return (
     <div className="position-relative">
@@ -209,7 +223,7 @@ const Table = ({
         style={customStyles}
         ariaHideApp={false}
       >
-        <FishPriceForm detail={detailData} callback={formCallback} loadingHandler={setLoading} />
+        <FishPriceForm detail={detailData} callback={formCallback} displayHandler={setIsFormModalOpen} />
       </Modal>
       <div className="action-button-container my-16">
         <Button 
@@ -233,11 +247,16 @@ const Table = ({
           <tr>
             {headers.map((header, headerIndex) => (
               <th 
-                className={header.sortable ? "cursor-pointer" : ""} 
+                className={header.sortable ? "cursor-pointer" : ""}
                 key={`header-${headerIndex}`}
                 onClick={header.sortable ? () => handleSorting(header.name) : null}
               >
                 {header.value}
+                {
+                  header.sortable && (
+                    <span className="ml-8">{renderSortIcon(header.name)}</span>
+                  )
+                }
               </th>
             ))}
           </tr>

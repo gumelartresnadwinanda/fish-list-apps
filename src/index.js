@@ -5,6 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import List from './pages/index.js';
 import { VariableProvider } from './utils/context';
+import 'font-awesome/css/font-awesome.css';
 
 const router = createBrowserRouter([
   {

@@ -9,7 +9,7 @@ import Select from '../atoms/select';
 import Form from '../organisms/form';
 import { uuid } from '../../utils/uniqueIDHelper';
 
-function FishPriceForm({ detail, callback, loadingHandler }) {
+function FishPriceForm({ detail, callback, displayHandler }) {
   const [formData, setFormData] = useState(defaultData);
   const { sizes, areas } = useContext(VariableContext);
   const [loading, setLoading] = useState(false);
@@ -90,6 +90,11 @@ function FishPriceForm({ detail, callback, loadingHandler }) {
     setFormData({ ...formData, [name]: value });
   }
 
+  function handleCancel() {
+    setFormData(defaultData);
+    if (displayHandler) displayHandler(false);
+  }
+
   return (
     <Form onSubmit={handleSubmit} >
       {
@@ -143,10 +148,11 @@ function FishPriceForm({ detail, callback, loadingHandler }) {
       </Label>
       <div className='button-container'>
         <Button 
-          type="cancel" 
+          type="button" 
           displayType="tertiery-outline" 
           text="Cancel"
           rounded
+          onClick={handleCancel}
         />
         <Button 
           type="submit" 
