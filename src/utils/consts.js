@@ -9,13 +9,8 @@ export const fishesListHeader = [
     sortable: true
   },
   {
-    name: 'area_kota',
-    value: 'Kota',
-    sortable: true
-  },
-  {
-    name: 'area_provinsi',
-    value: 'Provinsi',
+    name: 'size',
+    value: 'Ukuran',
     sortable: true
   },
   {
@@ -24,8 +19,13 @@ export const fishesListHeader = [
     sortable: true
   },
   {
-    name: 'size',
-    value: 'Ukuran',
+    name: 'area_kota',
+    value: 'Kota',
+    sortable: true
+  },
+  {
+    name: 'area_provinsi',
+    value: 'Provinsi',
     sortable: true
   },
   {
@@ -66,7 +66,8 @@ export const customStyles = {
     transform: "translate(-50%, -50%)",
     maxWidth: "411px",
     width: "90%",
-    maxHeight: "100vh"
+    maxHeight: "calc(100vh - 48px)",
+    padding: "32px 20px"
   },
   overlay: {
     backgroundColor: "rgba(0,0,0,.75)"
