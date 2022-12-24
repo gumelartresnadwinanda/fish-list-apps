@@ -79,3 +79,5 @@ export const defaultData = {
   price: '',
   size: ''
 };
+
+export const cacheName = "fishCache";

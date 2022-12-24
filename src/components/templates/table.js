@@ -25,7 +25,7 @@ const Table = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setDisplayData(datas || []);
+    updateData();
     const availableFilterFromDatas = datas.reduce((acc, val) => {
       for (var key of Object.keys(val)) {
         if (acc[key]) {
@@ -84,7 +84,7 @@ const Table = ({
     });
   }
 
-  const updateData = (sortingObj, term, filter) => {
+  const updateData = (sortingObj = sortValue, term = search, filter = filters) => {
     let sortedData = [...datas.filter(
       data => {
         if (filter) {

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Table from '../components/templates/table';
 import { GetFishList } from '../utils/service';
-import { fishesListHeader } from '../utils/consts';
+import { cacheName, fishesListHeader } from '../utils/consts';
 
 function Index() {
   const [fishes, setFishes] = useState([]);
@@ -11,17 +11,20 @@ function Index() {
     setFishes(fishesResponse.filter(fish => fish.komoditas));
   }
 
-  const updateDataOnDelete = useCallback((id) => {
+  const updateDataOnDelete = useCallback(async (id) => {
+    await caches.delete(cacheName)
     setFishes(fishes => fishes.filter((fish) => fish.uuid !== id));
   }, [])
 
-  const updateDataOnCreate = useCallback((newData) => {
+  const updateDataOnCreate = useCallback(async (newData) => {
+    await caches.delete(cacheName)
     if (newData) {
       setFishes(fishes => [...fishes, newData]);
     }
   }, [])
 
-  const updateDataOnUpdate = useCallback((updateData) => {
+  const updateDataOnUpdate = useCallback(async () => {
+    await caches.delete(cacheName)
     fetchFishes()
   }, [])
 
