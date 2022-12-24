@@ -47,13 +47,13 @@ export const numberValue = [
   'price', 'size'
 ]
 
-export const filterTitle = [...stringValueHeader, ...numberValue];
-
 
 export const titleMapping = {
   'area_provinsi': 'Provinsi',
   'area_kota': 'Kota',
-  'komoditas': 'Komoditas'
+  'komoditas': 'Komoditas',
+  'price': 'Harga',
+  'size': 'Ukuran'
 }
 
 export const customStyles = {
@@ -66,6 +66,7 @@ export const customStyles = {
     transform: "translate(-50%, -50%)",
     maxWidth: "411px",
     width: "90%",
+    maxHeight: "100vh"
   },
   overlay: {
     backgroundColor: "rgba(0,0,0,.75)"

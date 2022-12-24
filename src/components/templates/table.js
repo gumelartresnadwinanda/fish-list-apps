@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useState } from "react"
-import { customStyles, stringValueHeader } from "../../utils/consts";
+import { customStyles, numberValue, stringValueHeader } from "../../utils/consts";
 import { DeleteFishList } from "../../utils/service";
 import Filter from "../molecules/filter";
 import SearchBar from "../molecules/search";
@@ -18,6 +18,7 @@ const Table = ({
   const [sortValue, setSortValue] = useState(null);
   const [availableFilters, setAvailableFilters] = useState(null);
   const [filters, setFilters] = useState(null);
+  const [numberFilters, setNumbersFilter] = useState(null);
   const [search, setSearch] = useState('');
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -28,12 +29,20 @@ const Table = ({
     updateData();
     const availableFilterFromDatas = datas.reduce((acc, val) => {
       for (var key of Object.keys(val)) {
-        if (acc[key]) {
+        if (acc[key] && stringValueHeader.includes(key)) {
           if (val[key] && !acc[key].includes(val[key]?.trim())) {
             acc[key].push(val[key]?.trim())
           }
+        } else if (acc[key] && numberValue.includes(key)) {
+          if (Number(val[key]) > acc[key].max) acc[key].max = Number(val[key]);
+          if (Number(val[key]) < acc[key].min) acc[key].min = Number(val[key]);
         } else if (stringValueHeader.includes(key)) {
           acc[key] = [val[key]?.trim()];
+        } else if (numberValue.includes(key)) {
+          acc[key] = {
+            min: Number(val[key]),
+            max: Number(val[key])
+          }
         }
       }
       return acc;
@@ -55,10 +64,11 @@ const Table = ({
     updateData(sortingObj, search, filters);
   }
 
-  const handleFilter = (filters) => {
+  const handleFilter = (filters, numberFilter) => {
     setFilters(filters);
+    setNumbersFilter(numberFilter);
     setIsFilterModalOpen(false);
-    updateData(sortValue, search, filters)
+    updateData(sortValue, search, filters, numberFilter)
   } 
 
   const sortString = (sortData, sortingParams) => {
@@ -84,16 +94,28 @@ const Table = ({
     });
   }
 
-  const updateData = (sortingObj = sortValue, term = search, filter = filters) => {
+  const updateData = (sortingObj = sortValue, term = search, filter = filters, numberFilter = numberFilters) => {
     let sortedData = [...datas.filter(
       data => {
-        if (filter) {
+        if (filter || numberFilter) {
           let include = true;
-          Object.keys(filter).forEach(key => {
-            if (!filter[key].includes(data[key])) {
-              include = false;
-            }
-          });
+          if (filter && Object.keys(filter).length) {
+            Object.keys(filter).forEach(key => {
+              if (stringValueHeader.includes(key)) {
+                if (!filter[key].includes(data[key])) {
+                  include = false;
+                }
+              }
+            }); 
+          }
+          if (numberFilter) {
+            Object.keys(numberFilter).forEach(key => {
+              if ((numberFilter[key]?.min > Number(data[key])) 
+              || (numberFilter[key]?.max < Number(data[key]))) {
+                include = false;
+              }
+            }); 
+          }
           if (!data.komoditas.toLowerCase().includes(term.toLowerCase())) {
             return false;
           }
@@ -207,12 +229,18 @@ const Table = ({
       <Modal
         isOpen={isFilterModalOpen}
         onRequestClose={() => setIsFilterModalOpen(false)}
-        style={customStyles}
+        style={{
+          ...customStyles,
+          content: {
+            ...customStyles.content,
+            maxWidth: '700px'
+          }
+        }}
         ariaHideApp={false}
       >
         <Filter 
           availableFilters={availableFilters}
-          selectedFilter={filters} 
+          selectedFilter={{...filters, ...numberFilters}} 
           onCancel={() => setIsFilterModalOpen(false)}
           onFilter={handleFilter}
         />
@@ -235,58 +263,60 @@ const Table = ({
         <div className="button-container">
           <SearchBar onSearch={handleSearch} />
           <Button 
-            displayType="secondary" 
+            displayType="secondary-outline" 
             text="Filter"
             rounded 
             onClick={() => setIsFilterModalOpen(true)} 
           />
         </div>
       </div>
-      <table>  
-        <thead>
-          <tr>
-            {headers.map((header, headerIndex) => (
-              <th 
-                className={header.sortable ? "cursor-pointer" : ""}
-                key={`header-${headerIndex}`}
-                onClick={header.sortable ? () => handleSorting(header.name) : null}
-              >
-                {header.value}
-                {
-                  header.sortable && (
-                    <span className="ml-8">{renderSortIcon(header.name)}</span>
-                  )
-                }
-              </th>
-            ))}
-          </tr>
-        </thead>
+      <div className="table-container">
+        <table>  
+          <thead>
+            <tr>
+              {headers.map((header, headerIndex) => (
+                <th 
+                  className={header.sortable ? "cursor-pointer" : ""}
+                  key={`header-${headerIndex}`}
+                  onClick={header.sortable ? () => handleSorting(header.name) : null}
+                >
+                  {header.value}
+                  {
+                    header.sortable && (
+                      <span className="ml-8">{renderSortIcon(header.name)}</span>
+                    )
+                  }
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-        <tbody>
-          {
-            (loading || displayData?.length === 0) ? (
-              <tr>
-                <td className="centered" colSpan={headers?.length || 1}>Loading...</td>
-              </tr>
-            ) : (
-              displayData.map((rowData, rowIndex) =>  
-                <tr key={`row-${rowIndex}`}>
-                  {headers.map((header, cellIndex) => (
-                    <td key={`cell-${cellIndex}`}>
-                      {formatData({
-                        type: header.name, 
-                        data: rowData?.[header.name], 
-                        order: rowIndex + 1,
-                        id: rowData?.uuid
-                      })}
-                    </td>
-                  ))}
+          <tbody>
+            {
+              (loading || displayData?.length === 0) ? (
+                <tr>
+                  <td className="centered" colSpan={headers?.length || 1}>Loading...</td>
                 </tr>
+              ) : (
+                displayData.map((rowData, rowIndex) =>  
+                  <tr key={`row-${rowIndex}`}>
+                    {headers.map((header, cellIndex) => (
+                      <td key={`cell-${cellIndex}`}>
+                        {formatData({
+                          type: header.name, 
+                          data: rowData?.[header.name], 
+                          order: rowIndex + 1,
+                          id: rowData?.uuid
+                        })}
+                      </td>
+                    ))}
+                  </tr>
+                )
               )
-            )
-          }
-        </tbody>
-      </table>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 } 

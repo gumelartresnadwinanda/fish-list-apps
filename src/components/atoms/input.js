@@ -8,7 +8,9 @@ function Input({
   pattern, 
   required, 
   onKeyDown,
-  className 
+  className,
+  min,
+  max
 }) {
   return (
     <input
@@ -20,6 +22,8 @@ function Input({
       pattern={pattern}
       required={required}
       onKeyDown={onKeyDown}
+      min={min}
+      max={max}
     />
   );
 }

@@ -25,8 +25,7 @@ function SearchBar({ onSearch }) {
   }
   
   return (
-    <div className='d-flex'>
-
+    <div className='search-bar-container'>
       <div className='position-relative'>
         <Input 
           type="text" 
