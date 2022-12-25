@@ -30,14 +30,14 @@ const Table = ({
     const availableFilterFromDatas = datas.reduce((acc, val) => {
       for (var key of Object.keys(val)) {
         if (acc[key] && stringValueHeader.includes(key)) {
-          if (val[key] && !acc[key].includes(val[key]?.trim())) {
-            acc[key].push(val[key]?.trim())
+          if (formattedFilterKey(val[key]) && !acc[key].includes(formattedFilterKey(val[key]))) {
+            acc[key].push(formattedFilterKey(val[key]))
           }
         } else if (acc[key] && numberValue.includes(key)) {
           if (Number(val[key]) > acc[key].max) acc[key].max = Number(val[key]);
           if (Number(val[key]) < acc[key].min) acc[key].min = Number(val[key]);
         } else if (stringValueHeader.includes(key)) {
-          acc[key] = [val[key]?.trim()];
+          acc[key] = [formattedFilterKey(val[key])];
         } else if (numberValue.includes(key)) {
           acc[key] = {
             min: Number(val[key]),
@@ -51,6 +51,11 @@ const Table = ({
     setLoading(false);
   }, [datas]);
   
+  const formattedFilterKey = (string) => {
+    if (string) return string.toUpperCase().trim();
+    return string;
+  }
+
   const handleSearch = (term) => {
     setSearch(term);
     updateData(sortValue, term, filters);
@@ -102,7 +107,7 @@ const Table = ({
           if (filter && Object.keys(filter).length) {
             Object.keys(filter).forEach(key => {
               if (stringValueHeader.includes(key)) {
-                if (!filter[key].includes(data[key])) {
+                if (!filter[key].includes(formattedFilterKey(data[key]))) {
                   include = false;
                 }
               }
@@ -293,7 +298,7 @@ const Table = ({
 
           <tbody>
             {
-              (loading || displayData?.length === 0) ? (
+              loading ? (
                 <tr>
                   <td className="centered" colSpan={headers?.length || 1}>Loading...</td>
                 </tr>
