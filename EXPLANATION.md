@@ -5,8 +5,8 @@ Dengan banyaknya data yang ditampilkan, untuk dapat dilihat dengan jelas saya me
 
 Posisi Tampilan data diatur untuk menampilkan komoditas dan harga terlebih dahulu agar user dengan tampilan mobile dapat melihat informasi utama tanpa harus scroll terlebih dahulu
 
-| No | Komoditas | Ukuran | Harga | Kota | Provinsi | Action |
-| -- |---------- | ------ | ----- | ---- | -------- | ------ |
+| No | Komoditas | Ukuran | Harga | Kota | Provinsi | Waktu | Action |
+| -- |---------- | ------ | ----- | ---- | -------- | ----- | ------ |
 
 Dalam kolom Action terdapat 2 tombol untuk melakukan operasi update dan delete
 
