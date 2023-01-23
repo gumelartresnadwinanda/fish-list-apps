@@ -183,14 +183,19 @@ const Table = ({
         result = order;
         break;
       case 'timestamp':
-        const timeToDate = new Date(Number(data));
-        const dateOptions = {
-          month: "long",
-          day: "numeric",
-          year: "numeric"
-        };
-        const formattedDate = new Intl.DateTimeFormat("id", dateOptions).format(timeToDate);
-        result = formattedDate;
+        try {
+          const isValidIsoFormat = !isNaN(Date.parse(data));
+          const timeToDate = new Date(isValidIsoFormat ? data : Number(data));
+          const dateOptions = {
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+          };
+          const formattedDate = new Intl.DateTimeFormat("id", dateOptions).format(timeToDate);
+          result = formattedDate;
+        } catch {
+          result = '';
+        }
         break;
       case 'action':
         result = (
